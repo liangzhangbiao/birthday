@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>老婆生日快乐 ❤️</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    font-family:
+        "Microsoft YaHei",
+        "PingFang SC",
+        "Helvetica Neue",
+        sans-serif;
+
+    color: #fff;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            #681d5f 0%,
+            #321344 35%,
+            #130b28 70%,
+            #070615 100%
+        );
+}
+
+/* ================================
+   星空
+================================ */
+
+#stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #fff;
+    border-radius: 50%;
+
+    animation:
+        twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+
+    0% {
+        opacity: .15;
+        transform: scale(.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1.5);
+    }
+}
+
+/* ================================
+   页面主体
+================================ */
+
+.page {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding:
+        50px 20px 100px;
+}
+
+/* ================================
+   顶部
+================================ */
+
+.title {
+
+    margin-top: 20px;
+
+    font-size:
+        clamp(40px, 8vw, 82px);
+
+    font-weight: 900;
+
+    letter-spacing: 5px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff77aa,
+            #fff,
+            #ffd76a,
+            #ff77aa
+        );
+
+    background-size: 300%;
+
+    -webkit-background-clip: text;
+    color: transparent;
+
+    animation:
+        titleGradient 4s linear infinite,
+        titleIn 1.2s ease-out;
+}
+
+@keyframes titleGradient {
+
+    0% {
+        background-position: 0%;
+    }
+
+    100% {
+        background-position: 300%;
+    }
+}
+
+@keyframes titleIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(-40px) scale(.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.subtitle {
+
+    margin-top: 15px;
+
+    color: #ffd9e8;
+
+    font-size:
+        clamp(17px, 3vw, 26px);
+
+    letter-spacing: 3px;
+
+    text-align: center;
+
+    animation:
+        fadeIn 2s ease-out .5s both;
+}
+
+/* ================================
+   音乐按钮
+================================ */
+
+.music-button {
+
+    position: fixed;
+
+    top: 20px;
+    right: 20px;
+
+    z-index: 100;
+
+    border: 1px solid rgba(255,255,255,.35);
+
+    background:
+        rgba(255,255,255,.12);
+
+    color: #fff;
+
+    backdrop-filter: blur(10px);
+
+    padding:
+        10px 17px;
+
+    border-radius: 30px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: .3s;
+}
+
+.music-button:hover {
+
+    background:
+        rgba(255,255,255,.25);
+
+    transform: scale(1.05);
+}
+
+.music-playing {
+
+    animation:
+        musicRotate 2s linear infinite;
+}
+
+@keyframes musicRotate {
+
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ================================
+   照片轮播
+================================ */
+
+.photo-section {
+
+    width: min(650px, 92vw);
+
+    margin-top: 40px;
+
+    text-align: center;
+
+    animation:
+        fadeIn 1.5s ease-out 1s both;
+}
+
+.photo-box {
+
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 10;
+
+    overflow: hidden;
+
+    border-radius: 25px;
+
+    border:
+        3px solid rgba(255,255,255,.35);
+
+    background:
+        rgba(255,255,255,.08);
+
+    box-shadow:
+        0 20px 80px rgba(255,70,150,.25);
+}
+
+.photo {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    opacity: 0;
+
+    transform: scale(1.08);
+
+    transition:
+        opacity 1s ease,
+        transform 5s ease;
+}
+
+.photo.active {
+
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+/* 左右按钮 */
+
+.photo-btn {
+
+    position: absolute;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    width: 46px;
+    height: 46px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background:
+        rgba(0,0,0,.35);
+
+    color: #fff;
+
+    font-size: 26px;
+
+    cursor: pointer;
+
+    z-index: 5;
+
+    transition: .3s;
+}
+
+.photo-btn:hover {
+
+    background:
+        rgba(255,255,255,.3);
+
+    transform:
+        translateY(-50%) scale(1.1);
+}
+
+.photo-prev {
+    left: 15px;
+}
+
+.photo-next {
+    right: 15px;
+}
+
+/* 小圆点 */
+
+.dots {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 15px;
+}
+
+.dot {
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.3);
+
+    cursor: pointer;
+
+    transition: .3s;
+}
+
+.dot.active {
+
+    width: 25px;
+
+    border-radius: 10px;
+
+    background: #ff79a9;
+}
+
+/* ================================
+   倒计时
+================================ */
+
+.countdown-title {
+
+    margin-top: 45px;
+
+    font-size: 18px;
+
+    color: #ffdce9;
+
+    letter-spacing: 3px;
+}
+
+.countdown {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-top: 15px;
+
+    flex-wrap: wrap;
+}
+
+.time-box {
+
+    min-width: 75px;
+
+    padding:
+        12px 10px;
+
+    border-radius: 15px;
+
+    background:
+        rgba(255,255,255,.1);
+
+    border:
+        1px solid rgba(255,255,255,.15);
+
+    backdrop-filter:
+        blur(8px);
+}
+
+.time-number {
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    color: #ffd76a;
+}
+
+.time-label {
+
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    color: #ddd;
+}
+
+/* ================================
+   蛋糕
+================================ */
+
+.cake {
+
+    position: relative;
+
+    width: 260px;
+    height: 190px;
+
+    margin-top: 35px;
+
+    animation:
+        cakeFloat 3s ease-in-out infinite;
+}
+
+@keyframes cakeFloat {
+
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+.cake-body {
+
+    position: absolute;
+
+    left: 15px;
+    bottom: 0;
+
+    width: 230px;
+    height: 105px;
+
+    border-radius:
+        15px 15px 25px 25px;
+
+    background:
+        linear-gradient(
+            #ff91b8,
+            #ff4f86
+        );
+
+    box-shadow:
+        0 15px 30px rgba(255,40,120,.35);
+}
+
+.cake-body::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 28px;
+
+    border-radius: 50%;
+
+    background: #fff0f6;
+}
+
+.cream {
+
+    position: absolute;
+
+    top: 48px;
+    left: 0;
+
+    width: 260px;
+    height: 25px;
+
+    background: #fff5f9;
+
+    border-radius: 50%;
+
+    z-index: 3;
+}
+
+.cherry {
+
+    position: absolute;
+
+    width: 25px;
+    height: 25px;
+
+    border-radius: 50%;
+
+    background: #ff315f;
+
+    top: 23px;
+
+    z-index: 5;
+}
+
+.cherry:nth-child(1) {
+    left: 45px;
+}
+
+.cherry:nth-child(2) {
+    left: 120px;
+}
+
+.cherry:nth-child(3) {
+    right: 45px;
+}
+
+.candle {
+
+    position: absolute;
+
+    width: 14px;
+    height: 55px;
+
+    top: -2px;
+    left: 123px;
+
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #fff 0,
+            #fff 8px,
+            #ff77a7 8px,
+            #ff77a7 16px
+        );
+
+    border-radius: 5px;
+
+    z-index: 8;
+}
+
+.flame {
+
+    position: absolute;
+
+    width: 23px;
+    height: 33px;
+
+    left: -4px;
+    top: -34px;
+
+    background: #ffd15c;
+
+    border-radius:
+        50% 50% 50% 50%;
+
+    box-shadow:
+        0 0 20px #ffd15c,
+        0 0 45px #ff8a00;
+
+    animation:
+        flame .5s ease-in-out infinite alternate;
+}
+
+@keyframes flame {
+
+    from {
+        transform:
+            scale(.85)
+            rotate(-4deg);
+    }
+
+    to {
+        transform:
+            scale(1.1)
+            rotate(4deg);
+    }
+}
+
+/* ================================
+   打字机
+================================ */
+
+.message {
+
+    width: min(700px, 92vw);
+
+    min-height: 150px;
+
+    margin-top: 10px;
+
+    text-align: center;
+}
+
+.typewriter {
+
+    min-height: 90px;
+
+    font-size:
+        clamp(24px, 5vw, 42px);
+
+    line-height: 1.7;
+
+    font-weight: bold;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 10px rgba(255,120,170,.7),
+        0 0 30px rgba(255,80,150,.4);
+}
+
+.cursor {
+
+    display: inline-block;
+
+    width: 3px;
+    height: 1em;
+
+    background: #fff;
+
+    margin-left: 4px;
+
+    vertical-align: middle;
+
+    animation:
+        cursorBlink .7s infinite;
+}
+
+@keyframes cursorBlink {
+
+    0%,50% {
+        opacity: 1;
+    }
+
+    51%,100% {
+        opacity: 0;
+    }
+}
+
+.rich-message {
+
+    margin-top: 10px;
+
+    font-size:
+        clamp(20px, 4vw, 30px);
+
+    color: #ffd76a;
+
+    font-weight: bold;
+}
+
+/* ================================
+   惊喜按钮
+================================ */
+
+.surprise-button {
+
+    margin-top: 35px;
+
+    padding:
+        15px 30px;
+
+    border: none;
+
+    border-radius: 50px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    color: #fff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4f86,
+            #c43bff
+        );
+
+    box-shadow:
+        0 10px 35px rgba(255,60,140,.35);
+
+    cursor: pointer;
+
+    transition: .3s;
+}
+
+.surprise-button:hover {
+
+    transform:
+        translateY(-4px)
+        scale(1.04);
+
+    box-shadow:
+        0 15px 45px rgba(255,60,140,.5);
+}
+
+/* ================================
+   飘落爱心
+================================ */
+
+.falling-heart {
+
+    position: fixed;
+
+    top: -50px;
+
+    z-index: 3;
+
+    pointer-events: none;
+
+    animation:
+        fall linear forwards;
+}
+
+@keyframes fall {
+
+    0% {
+
+        transform:
+            translateY(0)
+            rotate(0);
+
+        opacity: 1;
+    }
+
+    100% {
+
+        transform:
+            translateY(110vh)
+            rotate(360deg);
+
+        opacity: 0;
+    }
+}
+
+/* ================================
+   烟花
+================================ */
+
+.firework-particle {
+
+    position: fixed;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: 50;
+
+    animation:
+        firework 1s ease-out forwards;
+}
+
+@keyframes firework {
+
+    0% {
+
+        transform:
+            translate(0,0)
+            scale(1);
+
+        opacity: 1;
+    }
+
+    100% {
+
+        transform:
+            translate(
+                var(--x),
+                var(--y)
+            )
+            scale(.1);
+
+        opacity: 0;
+    }
+}
+
+/* ================================
+   最终告白
+================================ */
+
+.final-screen {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 25px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #671b59,
+            #180921 65%,
+            #05030d
+        );
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 1s ease;
+}
+
+.final-screen.show {
+
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.final-content {
+
+    animation:
+        finalIn 1.5s ease-out;
+}
+
+@keyframes finalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            scale(.5)
+            translateY(50px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1)
+            translateY(0);
+    }
+}
+
+.final-heart {
+
+    font-size:
+        clamp(60px, 15vw, 130px);
+
+    animation:
+        heartbeat 1s infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.final-title {
+
+    margin-top: 20px;
+
+    font-size:
+        clamp(45px, 10vw, 90px);
+
+    font-weight: 900;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff77aa,
+            #fff,
+            #ffd76a
+        );
+
+    -webkit-background-clip: text;
+
+    color: transparent;
+}
+
+.final-text {
+
+    margin-top: 25px;
+
+    font-size:
+        clamp(20px, 4vw, 32px);
+
+    line-height: 2;
+
+    color: #ffe3ed;
+}
+
+.final-close {
+
+    margin-top: 35px;
+
+    padding:
+        12px 28px;
+
+    border-radius: 30px;
+
+    border:
+        1px solid rgba(255,255,255,.4);
+
+    background:
+        rgba(255,255,255,.1);
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 15px;
+}
+
+/* ================================
+   通用
+================================ */
+
+@keyframes fadeIn {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* 手机 */
+@media (max-width: 600px) {
+
+    .page {
+
+        padding-top: 70px;
+    }
+
+    .title {
+
+        letter-spacing: 2px;
+    }
+
+    .subtitle {
+
+        letter-spacing: 1px;
+    }
+
+    .photo-section {
+
+        margin-top: 25px;
+    }
+
+    .cake {
+
+        transform: scale(.85);
+
+        margin-top: 20px;
+    }
+
+    .countdown {
+
+        gap: 7px;
+    }
+
+    .time-box {
+
+        min-width: 65px;
+
+        padding:
+            10px 7px;
+    }
+
+    .time-number {
+
+        font-size: 23px;
+    }
+
+    .music-button {
+
+        top: 12px;
+        right: 12px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- ================================
+     星空
+================================ -->
+
+<div id="stars"></div>
+
+
+<!-- ================================
+     音乐
+================================ -->
+
+<button
+    id="musicButton"
+    class="music-button"
+    type="button"
+>
+    🎵 开启音乐
+</button>
+
+<audio
+    id="bgMusic"
+    loop
+    preload="auto"
+>
+    <!--
+        把这里替换成你的音乐文件
+
+        例如：
+
+        <source src="birthday.mp3" type="audio/mpeg">
+    -->
+    <source src="birthday.mp3" type="audio/mpeg">
+</audio>
+
+
+<!-- ================================
+     页面
+================================ -->
+
+<main class="page">
+
+    <h1 class="title">
+        祝老婆生日快乐
+    </h1>
+
+    <div class="subtitle">
+        🎂 今天你是全世界最幸福的妈妈 🎂
+    </div>
+
+
+    <!-- ============================
+         照片轮播
+    ============================= -->
+
+    <section class="photo-section">
+
+        <div class="photo-box">
+
+            <!--
+                把下面的图片替换成你们的照片
+
+                例如：
+
+                <img
+                    class="photo active"
+                    src="photo1.jpg"
+                    alt="我们的照片"
+                >
+            -->
+
+            <img
+                class="photo active"
+                src="photo1.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo2.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo3.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo4.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo5.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo6.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo7.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo8.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo9.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo10.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo11.jpg"
+                alt=""
+            >
+
+            <img
+                class="photo"
+                src="photo12.jpg"
+                alt=""
+            >
+
+            <button
+                class="photo-btn photo-prev"
+                id="prevBtn"
+                type="button"
+                aria-label="上一张"
+            >
+                ‹
+            </button>
+
+            <button
+                class="photo-btn photo-next"
+                id="nextBtn"
+                type="button"
+                aria-label="下一张"
+            >
+                ›
+            </button>
+
+        </div>
+
+        <div
+            class="dots"
+            id="dots"
+        ></div>
+
+    </section>
+
+
+    <!-- ============================
+         生日倒计时
+    ============================= -->
+
+    <div class="countdown-title">
+
+        距离老婆生日还有
+
+    </div>
+
+    <div
+        class="countdown"
+        id="countdown"
+    >
+
+        <div class="time-box">
+
+            <div
+                class="time-number"
+                id="days"
+            >
+                00
+            </div>
+
+            <div class="time-label">
+                天
+            </div>
+
+        </div>
+
+
+        <div class="time-box">
+
+            <div
+                class="time-number"
+                id="hours"
+            >
+                00
+            </div>
+
+            <div class="time-label">
+                时
+            </div>
+
+        </div>
+
+
+        <div class="time-box">
+
+            <div
+                class="time-number"
+                id="minutes"
+            >
+                00
+            </div>
+
+            <div class="time-label">
+                分
+            </div>
+
+        </div>
+
+
+        <div class="time-box">
+
+            <div
+                class="time-number"
+                id="seconds"
+            >
+                00
+            </div>
+
+            <div class="time-label">
+                秒
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================
+         蛋糕
+    ============================= -->
+
+    <div class="cake">
+
+        <div class="cake-body"></div>
+
+        <div class="cream"></div>
+
+        <div class="cherry"></div>
+        <div class="cherry"></div>
+        <div class="cherry"></div>
+
+        <div class="candle">
+
+            <div class="flame"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================
+         打字机
+    ============================= -->
+
+    <section class="message">
+
+        <div
+            class="typewriter"
+            id="typewriter"
+        ></div>
+
+        <span class="cursor"></span>
+
+        <div class="rich-message">
+
+            💰 努力赚钱，做个富婆！👑
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================
+         最终惊喜按钮
+    ============================= -->
+
+    <button
+        class="surprise-button"
+        id="surpriseButton"
+        type="button"
+    >
+
+        💝 点击打开最后的惊喜
+
+    </button>
+
+</main>
+
+
+<!-- ================================
+     最终告白
+================================ -->
+
+<div
+    class="final-screen"
+    id="finalScreen"
+>
+
+    <div class="final-content">
+
+        <div class="final-heart">
+            ❤️
+        </div>
+
+        <div class="final-title">
+
+            老婆，我爱你
+
+        </div>
+
+        <div class="final-text">
+
+            祝你生日快乐！🎂<br>
+
+            愿你每天都开心，<br>
+
+            永远漂亮，永远被爱。<br>
+
+            <strong>
+                努力赚钱，早日成为富婆！💰👑
+            </strong>
+
+            <br>
+
+            <span style="font-size: .8em;">
+                你的老公永远爱你 ❤️
+            </span>
+
+        </div>
+
+        <button
+            class="final-close"
+            id="finalClose"
+            type="button"
+        >
+            ❤️ 再看一次
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   【最重要的配置区域】
+===================================================== */
+
+
+/*
+ * ① 设置生日日期
+ *
+ * 例如老婆生日是：
+ *
+ * 2026年10月1日
+ *
+ * 就写：
+ *
+ * "2026-10-01T00:00:00"
+ *
+ * 如果生日已经过去，可以改成下一年的生日。
+ */
+
+const birthdayDate =
+    "2026-09-11T00:00:00";
+
+
+/*
+ * ② 打字机祝福语
+ */
+
+const messages = [
+
+    "老婆，生日快乐！❤️",
+
+    "愿你每天都开开心心，越来越漂亮。🌸",
+
+    "愿所有美好都发生在你身上。✨",
+
+    "愿你有花不完的钱，买不完的喜欢。💰",
+
+    "努力赚钱，做个富婆！👑",
+
+    "然后我负责抱紧富婆的大腿。🤣❤️"
+
+];
+
+
+/*
+ * ③ 照片
+ *
+ * 如果你有自己的照片，
+ * 直接修改 HTML 中的 src 即可。
+ *
+ * 例如：
+ *
+ * src="photo1.jpg"
+ * src="photo2.jpg"
+ * src="photo3.jpg"
+ *
+ * 如果和 birthday.html 放在同一个目录，
+ * 直接这样写即可。
+ */
+
+
+/*
+ * ④ 背景音乐
+ *
+ * 推荐把音乐文件：
+ *
+ * birthday.mp3
+ *
+ * 放到 birthday.html 同一个目录。
+ *
+ * 然后把 audio 改成：
+ *
+ * <source src="birthday.mp3" type="audio/mpeg">
+ *
+ */
+
+
+/* =====================================================
+   星空
+===================================================== */
+
+const stars =
+    document.getElementById("stars");
+
+for (let i = 0; i < 120; i++) {
+
+    const star =
+        document.createElement("div");
+
+    star.className = "star";
+
+    star.style.left =
+        Math.random() * 100 + "%";
+
+    star.style.top =
+        Math.random() * 100 + "%";
+
+    const size =
+        Math.random() * 3 + 1;
+
+    star.style.width =
+        size + "px";
+
+    star.style.height =
+        size + "px";
+
+    star.style.animationDelay =
+        Math.random() * 3 + "s";
+
+    stars.appendChild(star);
+}
+
+
+/* =====================================================
+   照片轮播
+===================================================== */
+
+const photos =
+    document.querySelectorAll(".photo");
+
+const dots =
+    document.getElementById("dots");
+
+let currentPhoto = 0;
+
+
+/*
+ * 创建小圆点
+ */
+
+photos.forEach((photo, index) => {
+
+    const dot =
+        document.createElement("div");
+
+    dot.className = "dot";
+
+    if (index === 0) {
+        dot.classList.add("active");
+    }
+
+    dot.addEventListener(
+        "click",
+        function() {
+
+            showPhoto(index);
+
+        }
+    );
+
+    dots.appendChild(dot);
+
+});
+
+
+function showPhoto(index) {
+
+    if (index < 0) {
+        index = photos.length - 1;
+    }
+
+    if (index >= photos.length) {
+        index = 0;
+    }
+
+    currentPhoto = index;
+
+    photos.forEach((photo, i) => {
+
+        photo.classList.toggle(
+            "active",
+            i === currentPhoto
+        );
+
+    });
+
+    document
+        .querySelectorAll(".dot")
+        .forEach((dot, i) => {
+
+            dot.classList.toggle(
+                "active",
+                i === currentPhoto
+            );
+
+        });
+}
+
+
+document
+    .getElementById("prevBtn")
+    .addEventListener(
+        "click",
+        function() {
+
+            showPhoto(currentPhoto - 1);
+
+        }
+    );
+
+
+document
+    .getElementById("nextBtn")
+    .addEventListener(
+        "click",
+        function() {
+
+            showPhoto(currentPhoto + 1);
+
+        }
+    );
+
+
+/*
+ * 每 4 秒自动切换
+ */
+
+setInterval(() => {
+
+    showPhoto(currentPhoto + 1);
+
+}, 4000);
+
+
+/* =====================================================
+   背景音乐
+===================================================== */
+
+const music =
+    document.getElementById("bgMusic");
+
+const musicButton =
+    document.getElementById("musicButton");
+
+
+musicButton.addEventListener(
+    "click",
+    async function() {
+
+        try {
+
+            if (music.paused) {
+
+                await music.play();
+
+                musicButton.innerHTML =
+                    "🎵 音乐播放中";
+
+                musicButton.classList.add(
+                    "music-playing"
+                );
+
+            } else {
+
+                music.pause();
+
+                musicButton.innerHTML =
+                    "🎵 开启音乐";
+
+                musicButton.classList.remove(
+                    "music-playing"
+                );
+
+            }
+
+        } catch (error) {
+
+            alert(
+                "请先在 HTML 中配置 birthday.mp3 音乐文件哦 ❤️"
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   生日倒计时
+===================================================== */
+
+const targetDate =
+    new Date(birthdayDate);
+
+
+function updateCountdown() {
+
+    const now =
+        new Date();
+
+    let diff =
+        targetDate.getTime()
+        - now.getTime();
+
+
+    /*
+     * 如果生日已经过去
+     * 自动计算下一年的生日
+     */
+
+    if (diff < 0) {
+
+        const nextBirthday =
+            new Date(targetDate);
+
+        nextBirthday.setFullYear(
+            now.getFullYear() + 1
+        );
+
+        diff =
+            nextBirthday.getTime()
+            - now.getTime();
+
+    }
+
+
+    const days =
+        Math.floor(
+            diff / (1000 * 60 * 60 * 24)
+        );
+
+    const hours =
+        Math.floor(
+            diff / (1000 * 60 * 60)
+        ) % 24;
+
+    const minutes =
+        Math.floor(
+            diff / (1000 * 60)
+        ) % 60;
+
+    const seconds =
+        Math.floor(
+            diff / 1000
+        ) % 60;
+
+
+    document
+        .getElementById("days")
+        .textContent =
+        String(days).padStart(2, "0");
+
+
+    document
+        .getElementById("hours")
+        .textContent =
+        String(hours).padStart(2, "0");
+
+
+    document
+        .getElementById("minutes")
+        .textContent =
+        String(minutes).padStart(2, "0");
+
+
+    document
+        .getElementById("seconds")
+        .textContent =
+        String(seconds).padStart(2, "0");
+
+}
+
+
+updateCountdown();
+
+setInterval(
+    updateCountdown,
+    1000
+);
+
+
+/* =====================================================
+   打字机效果
+===================================================== */
+
+const typewriter =
+    document.getElementById("typewriter");
+
+let messageIndex = 0;
+
+let characterIndex = 0;
+
+let deleting = false;
+
+
+function typeEffect() {
+
+    const currentMessage =
+        messages[messageIndex];
+
+
+    if (!deleting) {
+
+        characterIndex++;
+
+        typewriter.textContent =
+            currentMessage.substring(
+                0,
+                characterIndex
+            );
+
+
+        if (
+            characterIndex >=
+            currentMessage.length
+        ) {
+
+            deleting = true;
+
+            setTimeout(
+                typeEffect,
+                1800
+            );
+
+            return;
+        }
+
+    } else {
+
+        characterIndex--;
+
+        typewriter.textContent =
+            currentMessage.substring(
+                0,
+                characterIndex
+            );
+
+
+        if (characterIndex <= 0) {
+
+            deleting = false;
+
+            messageIndex++;
+
+            if (
+                messageIndex >=
+                messages.length
+            ) {
+
+                messageIndex = 0;
+
+            }
+
+        }
+
+    }
+
+
+    setTimeout(
+        typeEffect,
+        deleting ? 45 : 100
+    );
+
+}
+
+typeEffect();
+
+
+/* =====================================================
+   飘落爱心
+===================================================== */
+
+function createHeart() {
+
+    const heart =
+        document.createElement("div");
+
+    heart.className =
+        "falling-heart";
+
+
+    const heartList = [
+
+        "❤️",
+        "💕",
+        "💗",
+        "💖",
+        "💝",
+        "✨",
+        "🌸",
+        "💰"
+
+    ];
+
+
+    heart.textContent =
+        heartList[
+            Math.floor(
+                Math.random()
+                * heartList.length
+            )
+        ];
+
+
+    heart.style.left =
+        Math.random() * 100 + "vw";
+
+
+    heart.style.fontSize =
+        (
+            Math.random() * 18
+            + 15
+        ) + "px";
+
+
+    heart.style.animationDuration =
+        (
+            Math.random() * 5
+            + 5
+        ) + "s";
+
+
+    document.body.appendChild(
+        heart
+    );
+
+
+    setTimeout(
+        () => heart.remove(),
+        11000
+    );
+
+}
+
+
+setInterval(
+    createHeart,
+    350
+);
+
+
+/* =====================================================
+   烟花
+===================================================== */
+
+function createFirework(
+    x,
+    y
+) {
+
+    const particles = 30;
+
+
+    for (
+        let i = 0;
+        i < particles;
+        i++
+    ) {
+
+        const particle =
+            document.createElement("div");
+
+        particle.className =
+            "firework-particle";
+
+
+        particle.style.left =
+            x + "px";
+
+        particle.style.top =
+            y + "px";
+
+
+        const angle =
+            Math.PI * 2
+            * i
+            / particles;
+
+
+        const distance =
+            Math.random()
+            * 180
+            + 80;
+
+
+        particle.style.setProperty(
+            "--x",
+            Math.cos(angle)
+            * distance
+            + "px"
+        );
+
+
+        particle.style.setProperty(
+            "--y",
+            Math.sin(angle)
+            * distance
+            + "px"
+        );
+
+
+        const colors = [
+
+            "#ff5b91",
+            "#ffd15c",
+            "#ffffff",
+            "#ff9dcc",
+            "#b78cff",
+            "#7ee7ff"
+
+        ];
+
+
+        particle.style.background =
+            colors[
+                Math.floor(
+                    Math.random()
+                    * colors.length
+                )
+            ];
+
+
+        document.body.appendChild(
+            particle
+        );
+
+
+        setTimeout(
+            () => particle.remove(),
+            1200
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   点击页面烟花
+===================================================== */
+
+document.body.addEventListener(
+    "click",
+    function(event) {
+
+        /*
+         * 按钮不触发烟花
+         */
+
+        if (
+            event.target.closest(
+                ".photo-btn"
+            ) ||
+            event.target.closest(
+                ".music-button"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        createFirework(
+            event.clientX,
+            event.clientY
+        );
+
+    }
+);
+
+
+/* =====================================================
+   自动烟花
+===================================================== */
+
+setTimeout(
+    () => {
+
+        createFirework(
+            window.innerWidth * .2,
+            window.innerHeight * .25
+        );
+
+        setTimeout(
+            () => {
+
+                createFirework(
+                    window.innerWidth * .8,
+                    window.innerHeight * .25
+                );
+
+            },
+            500
+        );
+
+
+        setTimeout(
+            () => {
+
+                createFirework(
+                    window.innerWidth * .5,
+                    window.innerHeight * .15
+                );
+
+            },
+            1000
+        );
+
+    },
+    1500
+);
+
+
+/* =====================================================
+   最终惊喜
+===================================================== */
+
+const surpriseButton =
+    document.getElementById(
+        "surpriseButton"
+    );
+
+const finalScreen =
+    document.getElementById(
+        "finalScreen"
+    );
+
+
+surpriseButton.addEventListener(
+    "click",
+    function() {
+
+        finalScreen.classList.add(
+            "show"
+        );
+
+
+        /*
+         * 最终烟花
+         */
+
+        for (
+            let i = 0;
+            i < 12;
+            i++
+        ) {
+
+            setTimeout(
+                () => {
+
+                    createFirework(
+
+                        Math.random()
+                        * window.innerWidth,
+
+                        Math.random()
+                        * window.innerHeight
+                        * .7
+
+                    );
+
+                },
+
+                i * 250
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   再看一次
+===================================================== */
+
+document
+    .getElementById("finalClose")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            finalScreen.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   点击最终页面也可以关闭
+===================================================== */
+
+finalScreen.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target ===
+            finalScreen
+        ) {
+
+            finalScreen.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
