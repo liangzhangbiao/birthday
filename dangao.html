@@ -1,0 +1,3801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+
+<title>LOVE PROGRAM · 老婆生日快乐</title>
+
+<style>
+
+/* =========================================================
+   基础
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+}
+
+.screen,
+.final {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+body {
+    background: #02030a;
+    color: #7fffd4;
+    font-family:
+        Consolas,
+        Monaco,
+        "Courier New",
+        monospace;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   背景
+========================================================= */
+
+#matrix {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: .32;
+    pointer-events: none;
+}
+
+
+/* 星光 */
+
+.stars {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    box-shadow: 0 0 8px #00eaff;
+    animation: starBlink 2s infinite alternate;
+}
+
+@keyframes starBlink {
+    from {
+        opacity: .15;
+        transform: scale(.5);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.5);
+    }
+}
+
+
+/* 扫描线 */
+
+.scan {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 2px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #00eaff,
+            #ff38c7,
+            transparent
+        );
+    box-shadow:
+        0 0 20px #00eaff;
+    opacity: .4;
+    z-index: 200;
+    pointer-events: none;
+
+    animation:
+        scanMove 5s linear infinite;
+}
+
+@keyframes scanMove {
+    from {
+        top: 0;
+    }
+
+    to {
+        top: 100vh;
+    }
+}
+
+
+/* =========================================================
+   主页面
+========================================================= */
+
+.page {
+    position: relative;
+    z-index: 5;
+}
+
+
+/* 每一屏 */
+
+.screen {
+    min-height: 100vh;
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding:
+        70px 20px;
+
+    scroll-snap-align: start;
+}
+
+
+/* =========================================================
+   顶部 Logo
+========================================================= */
+
+.top-logo {
+    position: fixed;
+    left: 20px;
+    top: 15px;
+
+    z-index: 150;
+
+    color: #00eaff;
+
+    font-size: 13px;
+
+    text-shadow:
+        0 0 10px #00eaff;
+}
+
+
+/* =========================================================
+   左侧文件树
+========================================================= */
+
+.file-tree {
+
+    position: fixed;
+
+    left: 15px;
+    top: 65px;
+    bottom: 25px;
+
+    width: 155px;
+
+    border:
+        1px solid
+        rgba(0,220,255,.35);
+
+    background:
+        rgba(1,7,15,.76);
+
+    backdrop-filter:
+        blur(8px);
+
+    box-shadow:
+        0 0 25px
+        rgba(0,200,255,.08);
+
+    z-index: 50;
+
+    padding: 18px 10px;
+
+    font-size: 11px;
+
+    overflow: hidden;
+}
+
+
+.tree-title {
+    color: #00eaff;
+    margin-bottom: 20px;
+}
+
+
+.tree-folder {
+    color: #ff48c7;
+    margin: 12px 0 7px;
+}
+
+
+.tree-file {
+    color:
+        rgba(190,230,255,.75);
+
+    padding:
+        5px 8px;
+
+    transition: .3s;
+}
+
+
+.tree-file:hover {
+    color: #fff;
+
+    background:
+        rgba(0,230,255,.12);
+}
+
+
+.tree-file.active {
+    color: #ff5ed0;
+
+    background:
+        rgba(255,0,150,.1);
+
+    border-left:
+        2px solid
+        #ff38c7;
+}
+
+
+/* =========================================================
+   右侧状态
+========================================================= */
+
+.right-panel {
+
+    position: fixed;
+
+    right: 15px;
+    top: 90px;
+
+    width: 235px;
+
+    z-index: 50;
+}
+
+
+.panel {
+
+    border:
+        1px solid
+        rgba(0,220,255,.4);
+
+    background:
+        rgba(1,9,18,.78);
+
+    backdrop-filter:
+        blur(8px);
+
+    box-shadow:
+        0 0 25px
+        rgba(0,200,255,.08);
+
+    margin-bottom: 15px;
+
+    padding: 16px;
+
+}
+
+
+.panel-title {
+
+    color: #00eaff;
+
+    font-size: 13px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.progress-row {
+
+    margin: 11px 0;
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    font-size: 11px;
+
+}
+
+
+.progress {
+
+    color: #ff4ccf;
+}
+
+
+.heart-wave {
+
+    height: 70px;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+
+.heart-wave svg {
+
+    width: 100%;
+    height: 100%;
+
+}
+
+
+.heart-line {
+
+    fill: none;
+
+    stroke: #ff42cb;
+
+    stroke-width: 2;
+
+    filter:
+        drop-shadow(
+            0 0 7px
+            #ff42cb
+        );
+
+    stroke-dasharray: 300;
+
+    animation:
+        waveMove 3s linear infinite;
+}
+
+
+@keyframes waveMove {
+
+    from {
+        stroke-dashoffset: 300;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+
+/* =========================================================
+   中间区域
+========================================================= */
+
+.center-space {
+
+    width:
+        min(1000px, 76vw);
+
+    position: relative;
+
+    z-index: 20;
+
+}
+
+
+/* =========================================================
+   编辑器
+========================================================= */
+
+.editor {
+
+    height: 500px;
+
+    border:
+        1px solid
+        rgba(0,220,255,.38);
+
+    border-radius: 8px;
+
+    background:
+        rgba(2,7,14,.78);
+
+    backdrop-filter:
+        blur(8px);
+
+    box-shadow:
+
+        0 0 30px
+        rgba(0,210,255,.08),
+
+        inset 0 0 50px
+        rgba(0,180,255,.025);
+
+    overflow: hidden;
+
+    position: relative;
+}
+
+
+/* 编辑器头 */
+
+.editor-header {
+
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 14px;
+
+    border-bottom:
+        1px solid
+        rgba(0,220,255,.2);
+
+    background:
+        rgba(5,20,32,.75);
+
+}
+
+
+.editor-dots {
+
+    display: flex;
+
+    gap: 7px;
+
+    margin-right: 18px;
+
+}
+
+
+.editor-dots span {
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+}
+
+
+.red {
+    background: #ff4f81;
+    box-shadow: 0 0 8px #ff4f81;
+}
+
+
+.yellow {
+    background: #ffd84d;
+    box-shadow: 0 0 8px #ffd84d;
+}
+
+
+.green {
+    background: #00ff9d;
+    box-shadow: 0 0 8px #00ff9d;
+}
+
+
+.editor-name {
+
+    font-size: 12px;
+
+    color:
+        rgba(220,245,255,.7);
+
+}
+
+
+/* =========================================================
+   编辑器代码
+========================================================= */
+
+.editor-body {
+
+    display: flex;
+
+    height:
+        calc(100% - 40px);
+
+}
+
+
+.line-number {
+
+    width: 48px;
+
+    padding:
+        15px 10px;
+
+    text-align: right;
+
+    color:
+        rgba(0,220,255,.2);
+
+    font-size: 11px;
+
+    line-height: 22px;
+
+    user-select: none;
+
+}
+
+
+.code-area {
+
+    flex: 1;
+
+    overflow: hidden;
+
+    position: relative;
+
+}
+
+
+.code-content {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    padding:
+        15px 20px;
+
+    line-height: 22px;
+
+    font-size: 12px;
+
+    white-space: pre;
+
+    color:
+        rgba(190,255,230,.85);
+
+}
+
+
+.cyan {
+    color: #00eaff;
+}
+
+
+.pink {
+    color: #ff49c9;
+}
+
+
+.green-text {
+    color: #55ff9d;
+}
+
+
+.yellow-text {
+    color: #ffe66d;
+}
+
+
+.purple {
+    color: #bf7cff;
+}
+
+
+.dim {
+    color:
+        rgba(100,255,180,.35);
+}
+
+
+/* =========================================================
+   全息蛋糕
+========================================================= */
+
+.hologram-cake {
+
+    position: fixed;
+
+    left: 50%;
+    top: 54%;
+
+    width: 430px;
+    height: 420px;
+
+    transform:
+        translate(-50%,-50%);
+
+    z-index: 30;
+
+    pointer-events: none;
+
+}
+
+
+/* 蛋糕底部科技平台 */
+
+.cake-platform {
+
+    position: absolute;
+
+    width: 390px;
+    height: 70px;
+
+    left: 50%;
+    bottom: 18px;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    border:
+        3px solid
+        #00eaff;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(0,240,255,.22),
+            rgba(0,0,0,.1) 65%
+        );
+
+    box-shadow:
+
+        0 0 15px #00eaff,
+
+        0 0 50px
+        rgba(0,230,255,.35),
+
+        inset 0 0 30px
+        rgba(0,230,255,.2);
+
+    animation:
+        platformPulse 2s infinite alternate;
+}
+
+
+@keyframes platformPulse {
+
+    from {
+        filter: brightness(.8);
+    }
+
+    to {
+        filter: brightness(1.4);
+    }
+
+}
+
+
+.cake-platform::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 310px;
+    height: 30px;
+
+    transform:
+        translate(-50%,-50%);
+
+    border:
+        2px solid
+        #ff3ec8;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 15px #ff3ec8;
+
+}
+
+
+/* 蛋糕主体 */
+
+.cake-body {
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 55px;
+
+    width: 260px;
+    height: 230px;
+
+    transform:
+        translateX(-50%);
+
+    transform-style:
+        preserve-3d;
+
+    animation:
+        cakeSpin 9s linear infinite;
+
+}
+
+
+/* 三层蛋糕 */
+
+.tier {
+
+    position: absolute;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(255,100,220,.65),
+            rgba(35,100,180,.55)
+        );
+
+    border:
+        2px solid
+        rgba(0,240,255,.9);
+
+    box-shadow:
+
+        0 0 12px
+        #00eaff,
+
+        inset 0 0 25px
+        rgba(255,50,200,.3);
+
+}
+
+
+.tier-bottom {
+
+    bottom: 0;
+
+    width: 270px;
+
+    height: 90px;
+
+}
+
+
+.tier-middle {
+
+    bottom: 60px;
+
+    width: 220px;
+
+    height: 80px;
+
+}
+
+
+.tier-top {
+
+    bottom: 115px;
+
+    width: 165px;
+
+    height: 70px;
+
+}
+
+
+/* 蛋糕装饰 */
+
+.tier::after {
+
+    content: "♡  ♡  ♡  ♡";
+
+    position: absolute;
+
+    width: 100%;
+
+    left: 0;
+
+    bottom: 18px;
+
+    text-align: center;
+
+    color: #ff55cf;
+
+    text-shadow:
+        0 0 8px #ff55cf;
+
+    font-size: 17px;
+
+}
+
+
+/* 奶油 */
+
+.cream-drip {
+
+    position: absolute;
+
+    width: 100%;
+
+    height: 25px;
+
+    top: -8px;
+
+    left: 0;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff76d8,
+            #ffffff,
+            #6cf7ff,
+            #ff76d8
+        );
+
+    box-shadow:
+        0 0 15px
+        rgba(255,255,255,.7);
+
+}
+
+
+/* 旋转 */
+
+@keyframes cakeSpin {
+
+    from {
+
+        transform:
+            translateX(-50%)
+            rotateY(0deg);
+
+    }
+
+    to {
+
+        transform:
+            translateX(-50%)
+            rotateY(360deg);
+
+    }
+
+}
+
+
+/* =========================================================
+   爱心水晶
+========================================================= */
+
+.love-crystal {
+
+    position: absolute;
+
+    left: 50%;
+    top: 42px;
+
+    transform:
+        translateX(-50%)
+        rotate(-45deg);
+
+    width: 65px;
+    height: 65px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff72dc,
+            #8a5cff,
+            #00eaff
+        );
+
+    box-shadow:
+
+        0 0 20px #ff4dcc,
+
+        0 0 50px
+        rgba(255,50,200,.7);
+
+    animation:
+        crystalFloat 2s ease-in-out infinite alternate;
+
+    z-index: 20;
+
+}
+
+
+.love-crystal::before,
+.love-crystal::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 65px;
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: inherit;
+
+}
+
+
+.love-crystal::before {
+
+    top: -32px;
+    left: 0;
+
+}
+
+
+.love-crystal::after {
+
+    left: 32px;
+    top: 0;
+
+}
+
+
+.crystal-text {
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%,-50%)
+        rotate(45deg);
+
+    color: #fff;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-weight: bold;
+
+    font-size: 13px;
+
+    width: 100px;
+
+    text-align: center;
+
+    z-index: 50;
+
+    text-shadow:
+        0 0 10px #fff;
+
+}
+
+
+@keyframes crystalFloat {
+
+    from {
+
+        transform:
+            translateX(-50%)
+            rotate(-45deg)
+            translateY(0);
+
+    }
+
+    to {
+
+        transform:
+            translateX(-50%)
+            rotate(-45deg)
+            translateY(-10px);
+
+    }
+
+}
+
+
+/* =========================================================
+   蜡烛
+========================================================= */
+
+.candle-row {
+
+    position: absolute;
+
+    left: 50%;
+    top: 0;
+
+    transform:
+        translateX(-50%);
+
+    display: flex;
+
+    gap: 28px;
+
+    z-index: 30;
+
+}
+
+
+.candle {
+
+    position: relative;
+
+    width: 10px;
+    height: 50px;
+
+    border-radius: 4px;
+
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #fff,
+            #fff 5px,
+            #ff4bc8 5px,
+            #ff4bc8 10px
+        );
+
+    box-shadow:
+        0 0 8px #ff48c7;
+
+}
+
+
+.flame {
+
+    position: absolute;
+
+    left: 50%;
+    top: -25px;
+
+    width: 15px;
+    height: 24px;
+
+    transform:
+        translateX(-50%)
+        rotate(45deg);
+
+    border-radius:
+        50% 50% 50% 0;
+
+    background:
+        #fff6a0;
+
+    box-shadow:
+
+        0 0 10px #fff,
+
+        0 0 25px #ff65d2,
+
+        0 0 45px #ff39bd;
+
+    animation:
+        flameMove .5s infinite alternate;
+
+}
+
+
+@keyframes flameMove {
+
+    from {
+
+        transform:
+            translateX(-50%)
+            rotate(40deg)
+            scale(.85);
+
+    }
+
+    to {
+
+        transform:
+            translateX(-50%)
+            rotate(50deg)
+            scale(1.15);
+
+    }
+
+}
+
+
+/* =========================================================
+   浮动爱心粒子
+========================================================= */
+
+.hearts {
+
+    position: absolute;
+
+    inset: 0;
+
+}
+
+
+.float-heart {
+
+    position: absolute;
+
+    color: #ff4dcc;
+
+    font-size: 16px;
+
+    text-shadow:
+        0 0 10px #ff4dcc;
+
+    animation:
+        floatHeart 4s linear infinite;
+
+}
+
+
+@keyframes floatHeart {
+
+    from {
+
+        transform:
+            translateY(60px)
+            scale(.5);
+
+        opacity: 0;
+
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    to {
+
+        transform:
+            translateY(-130px)
+            scale(1.2);
+
+        opacity: 0;
+
+    }
+
+}
+
+
+/* =========================================================
+   底部 Terminal
+========================================================= */
+
+.terminal {
+
+    position: absolute;
+
+    left: 50%;
+    bottom: -150px;
+
+    transform:
+        translateX(-50%);
+
+    width: 85%;
+
+    height: 125px;
+
+    background:
+        rgba(0,5,9,.9);
+
+    border:
+        1px solid
+        rgba(0,220,255,.35);
+
+    box-shadow:
+        0 0 20px
+        rgba(0,220,255,.08);
+
+    overflow: hidden;
+
+}
+
+
+.terminal-header {
+
+    height: 28px;
+
+    padding: 6px 12px;
+
+    border-bottom:
+        1px solid
+        rgba(0,220,255,.2);
+
+    color: #00eaff;
+
+    font-size: 10px;
+
+}
+
+
+.terminal-scroll {
+
+    position: absolute;
+
+    left: 0;
+    top: 30px;
+
+    width: 100%;
+
+    padding:
+        5px 15px;
+
+    font-size: 10px;
+
+    line-height: 18px;
+
+    animation:
+        terminalMove 16s linear infinite;
+
+}
+
+
+@keyframes terminalMove {
+
+    from {
+        transform:
+            translateY(100px);
+    }
+
+    to {
+        transform:
+            translateY(-300px);
+    }
+
+}
+
+
+/* =========================================================
+   祝福文字
+========================================================= */
+
+.message {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: -300px;
+
+    transform:
+        translateX(-50%);
+
+    width: 90%;
+
+    text-align: center;
+
+}
+
+
+.message-code {
+
+    font-size: 11px;
+
+    color:
+        rgba(0,230,255,.5);
+
+    margin-bottom: 15px;
+
+}
+
+
+.message h1 {
+
+    font-family:
+        "Microsoft YaHei",
+        sans-serif;
+
+    font-size:
+        clamp(30px,5vw,58px);
+
+    color: #ff55c9;
+
+    text-shadow:
+
+        0 0 10px #ff55c9,
+
+        0 0 30px #ff55c9;
+
+}
+
+
+.message p {
+
+    margin-top: 12px;
+
+    font-family:
+        "Microsoft YaHei",
+        sans-serif;
+
+    color:
+        rgba(255,255,255,.8);
+
+    font-size:
+        clamp(14px,2vw,20px);
+
+}
+
+
+/* =========================================================
+   最后一屏
+========================================================= */
+
+.final {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    position: relative;
+
+}
+
+
+.final-content {
+
+    z-index: 70;
+
+}
+
+
+.final-heart {
+
+    font-size:
+        clamp(80px,15vw,170px);
+
+    animation:
+        heartbeat 1s infinite;
+
+    filter:
+        drop-shadow(
+            0 0 25px #ff38c7
+        );
+
+}
+
+
+@keyframes heartbeat {
+
+    0%,100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+}
+
+
+.final h1 {
+
+    font-family:
+        "Microsoft YaHei",
+        sans-serif;
+
+    font-size:
+        clamp(45px,8vw,90px);
+
+    color: #ff52c8;
+
+    text-shadow:
+
+        0 0 15px #ff52c8,
+
+        0 0 45px #ff52c8,
+
+        0 0 80px #ff52c8;
+
+}
+
+
+.final-sub {
+
+    margin-top: 20px;
+
+    line-height: 2.2;
+
+    color:
+        rgba(255,255,255,.85);
+
+}
+
+
+/* =========================================================
+   烟花
+========================================================= */
+
+#fireworks {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 60;
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================================
+   自动滚动提示
+========================================================= */
+
+.scroll-hint {
+
+    position: fixed;
+
+    bottom: 18px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 180;
+
+    padding:
+        8px 20px;
+
+    border:
+        1px solid
+        rgba(0,220,255,.5);
+
+    background:
+        rgba(0,10,18,.75);
+
+    color:
+        rgba(0,230,255,.8);
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =========================================================
+   手机端
+========================================================= */
+
+@media(max-width:900px) {
+
+    .file-tree {
+        display: none;
+    }
+
+    .right-panel {
+        display: none;
+    }
+
+    .center-space {
+        width: 94vw;
+    }
+
+    .hologram-cake {
+        transform:
+            translate(-50%,-50%)
+            scale(.65);
+    }
+
+    .editor {
+        height: 470px;
+    }
+
+}
+
+
+@media(max-width:500px) {
+
+    .hologram-cake {
+        transform:
+            translate(-50%,-50%)
+            scale(.48);
+    }
+
+    .editor {
+        height: 430px;
+    }
+
+    .terminal {
+        bottom: -130px;
+        height: 100px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     Matrix
+===================================================== -->
+
+<canvas id="matrix"></canvas>
+
+
+<!-- 星星 -->
+
+<div class="stars" id="stars"></div>
+
+
+<!-- 扫描线 -->
+
+<div class="scan"></div>
+
+
+<!-- Logo -->
+
+<div class="top-logo">
+    ♥ LOVE PROGRAM / birthday.exe
+</div>
+
+
+<!-- =====================================================
+     左侧文件树
+===================================================== -->
+
+<div class="file-tree">
+
+    <div class="tree-title">
+        LOVE-SPACE
+    </div>
+
+    <div class="tree-folder">
+        ♥ EXPLORER
+    </div>
+
+    <div class="tree-folder">
+        ▾ SPECIAL_DAY
+    </div>
+
+    <div class="tree-file active">
+        ♡ birthday.love
+    </div>
+
+    <div class="tree-file">
+        ♡ cake.config
+    </div>
+
+    <div class="tree-file">
+        ♡ love.module
+    </div>
+
+    <div class="tree-file">
+        ♡ forever.promise
+    </div>
+
+
+    <div class="tree-folder">
+        ▾ MEMORIES
+    </div>
+
+    <div class="tree-file">
+        ♡ first_meet.exe
+    </div>
+
+    <div class="tree-file">
+        ♡ sweet_moments.dat
+    </div>
+
+    <div class="tree-file">
+        ♡ photo.list
+    </div>
+
+    <div class="tree-file">
+        ♡ travel_plan.txt
+    </div>
+
+
+    <div class="tree-folder">
+        ▾ WISHES
+    </div>
+
+    <div class="tree-file">
+        ♡ happiness.sys
+    </div>
+
+    <div class="tree-file">
+        ♡ beauty.upgrade
+    </div>
+
+    <div class="tree-file">
+        ♡ rich.lady.mode
+    </div>
+
+
+    <div class="tree-folder">
+        ▾ OUR_FUTURE
+    </div>
+
+    <div class="tree-file">
+        ♡ together.forever
+    </div>
+
+    <div class="tree-file">
+        ♡ marriage.plan
+    </div>
+
+    <div class="tree-file">
+        ♡ old_with_you.exe
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     右侧状态
+===================================================== -->
+
+<div class="right-panel">
+
+
+    <div class="panel">
+
+        <div class="panel-title">
+            SYSTEM STATUS
+        </div>
+
+        <div class="progress-row">
+            <span>爱意加载中...</span>
+            <span>100%</span>
+        </div>
+
+        <div class="progress-row">
+            <span>HAPPINESS</span>
+            <span class="progress">
+                ██████████
+            </span>
+        </div>
+
+        <div class="progress-row">
+            <span>MEMORIES</span>
+            <span class="progress">
+                ██████████
+            </span>
+        </div>
+
+        <div class="progress-row">
+            <span>LOVE</span>
+            <span class="progress">
+                ∞
+            </span>
+        </div>
+
+        <div class="progress-row">
+            <span>FOREVER</span>
+            <span>ACTIVE</span>
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-title">
+            LOVE ANALYSIS
+        </div>
+
+        <div class="heart-wave">
+
+            <svg
+                viewBox="0 0 300 80"
+                preserveAspectRatio="none"
+            >
+
+                <polyline
+                    class="heart-line"
+                    points="
+                    0,45
+                    30,45
+                    45,45
+                    55,20
+                    65,65
+                    80,40
+                    95,45
+                    110,45
+                    125,10
+                    140,70
+                    155,45
+                    170,45
+                    190,45
+                    205,20
+                    215,65
+                    230,45
+                    260,45
+                    280,45
+                    300,45
+                    "
+                />
+
+            </svg>
+
+        </div>
+
+        <div
+            style="
+            color:#ff55ca;
+            font-size:11px;
+            margin-top:10px;
+            "
+        >
+            爱你指数：∞
+        </div>
+
+        <div
+            style="
+            color:#00eaff;
+            font-size:11px;
+            margin-top:8px;
+            "
+        >
+            心动频率：1314Hz
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-title">
+            HEART SIGNAL
+        </div>
+
+        <div
+            style="
+            color:#ff48c7;
+            font-size:20px;
+            text-align:center;
+            padding:15px;
+            "
+        >
+            ♥ ♥ ♥
+        </div>
+
+        <div
+            style="
+            color:#00eaff;
+            text-align:center;
+            font-size:11px;
+            "
+        >
+            STATUS: STABLE ♥
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     固定全息蛋糕
+===================================================== -->
+
+<div class="hologram-cake">
+
+
+    <!-- 浮动爱心 -->
+
+    <div class="hearts">
+
+        <span
+            class="float-heart"
+            style="left:8%;top:60%;animation-delay:.2s"
+        >♥</span>
+
+        <span
+            class="float-heart"
+            style="left:18%;top:45%;animation-delay:1s"
+        >♡</span>
+
+        <span
+            class="float-heart"
+            style="left:80%;top:50%;animation-delay:1.5s"
+        >♥</span>
+
+        <span
+            class="float-heart"
+            style="left:88%;top:65%;animation-delay:2.2s"
+        >♡</span>
+
+        <span
+            class="float-heart"
+            style="left:25%;top:70%;animation-delay:2.8s"
+        >♥</span>
+
+    </div>
+
+
+    <!-- 科技平台 -->
+
+    <div class="cake-platform"></div>
+
+
+    <!-- 蛋糕 -->
+
+    <div class="cake-body">
+
+
+        <!-- 蜡烛 -->
+
+        <div class="candle-row">
+
+            <div class="candle">
+                <div class="flame"></div>
+            </div>
+
+            <div class="candle">
+                <div class="flame"></div>
+            </div>
+
+            <div class="candle">
+                <div class="flame"></div>
+            </div>
+
+            <div class="candle">
+                <div class="flame"></div>
+            </div>
+
+        </div>
+
+
+        <!-- 爱心水晶 -->
+
+        <div class="love-crystal">
+
+            <div class="crystal-text">
+                LOVE<br>
+                YOU
+            </div>
+
+        </div>
+
+
+        <!-- 第一层 -->
+
+        <div
+            class="
+            tier
+            tier-bottom
+            "
+        >
+
+            <div class="cream-drip"></div>
+
+        </div>
+
+
+        <!-- 第二层 -->
+
+        <div
+            class="
+            tier
+            tier-middle
+            "
+        >
+
+            <div class="cream-drip"></div>
+
+        </div>
+
+
+        <!-- 第三层 -->
+
+        <div
+            class="
+            tier
+            tier-top
+            "
+        >
+
+            <div class="cream-drip"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     主内容
+===================================================== -->
+
+<main class="page">
+
+
+<!-- =====================================================
+     第一屏
+===================================================== -->
+
+<section class="screen">
+
+
+    <div class="center-space">
+
+
+        <div class="editor">
+
+
+            <div class="editor-header">
+
+                <div class="editor-dots">
+
+                    <span class="red"></span>
+                    <span class="yellow"></span>
+                    <span class="green"></span>
+
+                </div>
+
+                <div class="editor-name">
+                    birthday.love
+                </div>
+
+            </div>
+
+
+            <div class="editor-body">
+
+
+                <div
+                    class="line-number"
+                    id="numbers1"
+                ></div>
+
+
+                <div class="code-area">
+
+                    <div
+                        class="code-content"
+                        id="code1"
+                    >
+
+<pre>
+<span class="dim">// 老婆生日快乐专属程序</span>
+
+<span class="pink">import</span>
+<span class="cyan">love</span>
+<span class="pink">from</span>
+<span class="yellow">"my_heart"</span>;
+
+<span class="pink">import</span>
+<span class="cyan">happiness</span>
+<span class="pink">from</span>
+<span class="yellow">"your_smile"</span>;
+
+<span class="pink">import</span>
+<span class="cyan">forever</span>
+<span class="pink">from</span>
+<span class="yellow">"our_future"</span>;
+
+
+<span class="pink">function</span>
+<span class="green-text">startBirthdayProgram</span>() {
+
+    <span class="pink">let</span>
+    today =
+    <span class="pink">new</span>
+    Date();
+
+    <span class="pink">let</span>
+    target =
+    <span class="yellow">"老婆"</span>;
+
+    <span class="pink">let</span>
+    loveLevel =
+    <span class="yellow">Infinity</span>;
+
+    console.log(
+        <span class="yellow">
+        "正在载入专属祝福..."
+        </span>
+    );
+
+    load(
+        happiness
+    );
+
+    load(
+        beauty
+    );
+
+    load(
+        richLadyMode
+    );
+
+    load(
+        ourFuture
+    );
+
+    compileLove();
+
+    activateForever();
+
+}
+
+
+startBirthdayProgram();
+
+
+<span class="dim">
+// 程序运行成功
+// LOVE_STATUS = TRUE
+</span>
+
+
+console.log(
+    <span class="yellow">
+    "老婆，生日快乐！"
+    </span>
+);
+
+
+console.log(
+    <span class="yellow">
+    "我爱你 ❤️"
+    </span>
+);
+
+
+<span class="green-text">
+[OK] 幸福模块加载完成
+</span>
+
+<span class="green-text">
+[OK] 开心模块加载完成
+</span>
+
+<span class="green-text">
+[OK] 美丽模块加载完成
+</span>
+
+<span class="green-text">
+[OK] 财富模块加载完成
+</span>
+
+<span class="green-text">
+[OK] 未来模块加载完成
+</span>
+
+
+<span class="cyan">
+LOVE PROGRAM
+</span>
+
+<span class="pink">
+████████████████████
+</span>
+
+<span class="yellow">
+100%
+</span>
+
+
+<span class="dim">
+Everything is ready...
+</span>
+
+<span class="pink">
+HAPPY BIRTHDAY TO MY LOVE
+</span>
+
+<span class="yellow">
+LOVE_STATUS = TRUE
+</span>
+
+<span class="cyan">
+LOVE = INFINITE
+</span>
+
+<span class="green-text">
+MEMORIES = ENDLESS
+</span>
+
+<span class="purple">
+FUTURE = TOGETHER
+</span>
+
+</pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Terminal -->
+
+            <div class="terminal">
+
+                <div class="terminal-header">
+                    TERMINAL · OUTPUT
+                </div>
+
+                <div class="terminal-scroll">
+
+                    <div>
+                        [INFO] 正在启动生日惊喜程序...
+                    </div>
+
+                    <div>
+                        [OK] 祝福模块加载完成
+                    </div>
+
+                    <div>
+                        [OK] 开心模块加载完成
+                    </div>
+
+                    <div>
+                        [OK] 美丽模块加载完成
+                    </div>
+
+                    <div>
+                        [OK] 财富模块加载完成
+                    </div>
+
+                    <div>
+                        [OK] 未来模块加载完成
+                    </div>
+
+                    <div>
+                        [SUCCESS] 所有祝福加载成功！
+                    </div>
+
+                    <div>
+                        [RUNNING] 正在为老婆创建最浪漫的一天...
+                    </div>
+
+                    <div>
+                        [LOVE] 老婆，生日快乐！我爱你！
+                    </div>
+
+                    <div>
+                        LOVE_STATUS = TRUE
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="message">
+
+            <div class="message-code">
+                // PROGRAM MESSAGE #01
+            </div>
+
+            <h1>
+                ♡ 老婆生日快乐 ♡
+            </h1>
+
+            <p>
+                Happy Birthday To My Love
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     第二屏
+===================================================== -->
+
+<section class="screen">
+
+
+    <div class="center-space">
+
+        <div class="editor">
+
+            <div class="editor-header">
+
+                <div class="editor-dots">
+
+                    <span class="red"></span>
+                    <span class="yellow"></span>
+                    <span class="green"></span>
+
+                </div>
+
+                <div class="editor-name">
+                    happiness.js
+                </div>
+
+            </div>
+
+
+            <div class="editor-body">
+
+                <div
+                    class="line-number"
+                    id="numbers2"
+                ></div>
+
+
+                <div class="code-area">
+
+                    <div
+                        class="code-content"
+                        id="code2"
+                    >
+
+<pre>
+<span class="dim">
+// CHAPTER 02
+// HAPPINESS MODULE
+</span>
+
+<span class="pink">function</span>
+<span class="green-text">makeHerHappy</span>() {
+
+    removeSadness();
+
+    removeWorries();
+
+    removeBadMood();
+
+    happiness =
+        <span class="yellow">
+        999999999
+        </span>;
+
+    smile =
+        <span class="yellow">
+        "EVERY DAY"
+        </span>;
+
+    <span class="pink">return</span>
+        happiness;
+}
+
+
+makeHerHappy();
+
+
+<span class="green-text">
+[OK] Sadness = 0
+</span>
+
+<span class="green-text">
+[OK] Happiness = MAX
+</span>
+
+<span class="green-text">
+[OK] Smile = BEAUTIFUL
+</span>
+
+
+<span class="yellow">
+愿你每天都开心。
+</span>
+
+<span class="yellow">
+愿你每天都有好心情。
+</span>
+
+<span class="yellow">
+愿你遇到的都是温柔。
+</span>
+
+<span class="yellow">
+愿所有烦恼自动删除。
+</span>
+
+
+<span class="cyan">
+executeWish();
+</span>
+
+
+<span class="pink">
+HAPPINESS LEVEL
+</span>
+
+<span class="pink">
+████████████████████
+</span>
+
+<span class="yellow">
+100%
+</span>
+
+
+<span class="dim">
+Wish completed successfully.
+</span>
+
+</pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="message">
+
+            <div class="message-code">
+                // WISH MODULE #02
+            </div>
+
+            <h1>
+                💗 愿你每天都开心快乐
+            </h1>
+
+            <p>
+                少一点烦恼，多一点快乐。
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     第三屏
+===================================================== -->
+
+<section class="screen">
+
+
+    <div class="center-space">
+
+        <div class="editor">
+
+            <div class="editor-header">
+
+                <div class="editor-dots">
+
+                    <span class="red"></span>
+                    <span class="yellow"></span>
+                    <span class="green"></span>
+
+                </div>
+
+                <div class="editor-name">
+                    beauty.upgrade
+                </div>
+
+            </div>
+
+
+            <div class="editor-body">
+
+                <div
+                    class="line-number"
+                    id="numbers3"
+                ></div>
+
+
+                <div class="code-area">
+
+                    <div
+                        class="code-content"
+                        id="code3"
+                    >
+
+<pre>
+<span class="dim">
+// CHAPTER 03
+// BEAUTY UPGRADE
+</span>
+
+<span class="pink">const</span>
+beauty = {
+
+    face:
+    <span class="yellow">
+    "越来越漂亮"
+    </span>,
+
+    smile:
+    <span class="yellow">
+    "越来越甜"
+    </span>,
+
+    charm:
+    <span class="yellow">
+    "MAXIMUM"
+    </span>
+
+};
+
+
+<span class="pink">while</span>(
+    true
+) {
+
+    beauty.level++;
+
+    beauty.charm++;
+
+}
+
+
+<span class="green-text">
+[UPGRADE] Beauty +1
+</span>
+
+<span class="green-text">
+[UPGRADE] Charm +1
+</span>
+
+<span class="green-text">
+[UPGRADE] Smile +1
+</span>
+
+
+<span class="yellow">
+愿你越来越漂亮。
+</span>
+
+<span class="yellow">
+愿你一直保持可爱。
+</span>
+
+<span class="yellow">
+愿你的笑容永远这么好看。
+</span>
+
+
+<span class="cyan">
+beauty.upgrade();
+</span>
+
+<span class="cyan">
+beauty.upgrade();
+</span>
+
+<span class="cyan">
+beauty.upgrade();
+</span>
+
+
+<span class="pink">
+BEAUTY LEVEL = ∞
+</span>
+
+<span class="yellow">
+UPGRADE COMPLETED
+</span>
+
+</pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="message">
+
+            <div class="message-code">
+                // BEAUTY MODULE #03
+            </div>
+
+            <h1>
+                💕 愿你越来越漂亮
+            </h1>
+
+            <p>
+                每一天都比昨天更加闪耀。
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     第四屏
+===================================================== -->
+
+<section class="screen">
+
+
+    <div class="center-space">
+
+        <div class="editor">
+
+            <div class="editor-header">
+
+                <div class="editor-dots">
+
+                    <span class="red"></span>
+                    <span class="yellow"></span>
+                    <span class="green"></span>
+
+                </div>
+
+                <div class="editor-name">
+                    rich.lady.mode
+                </div>
+
+            </div>
+
+
+            <div class="editor-body">
+
+                <div
+                    class="line-number"
+                    id="numbers4"
+                ></div>
+
+
+                <div class="code-area">
+
+                    <div
+                        class="code-content"
+                        id="code4"
+                    >
+
+<pre>
+<span class="dim">
+// CHAPTER 04
+// RICH LADY MODE
+</span>
+
+<span class="pink">const</span>
+money = {
+
+    target:
+    <span class="yellow">
+    999999999
+    </span>,
+
+    freedom:
+    <span class="yellow">
+    "UNLIMITED"
+    </span>,
+
+    lifestyle:
+    <span class="yellow">
+    "DREAM"
+    </span>
+
+};
+
+
+workHard();
+
+makeMoney();
+
+saveMoney();
+
+investMoney();
+
+
+<span class="pink">if</span>(
+    money &lt; target
+) {
+
+    keepWorking();
+
+}
+
+
+<span class="yellow">
+努力赚钱做个富婆 💰
+</span>
+
+<span class="yellow">
+想买什么就买什么。
+</span>
+
+<span class="yellow">
+想去哪里就去哪里。
+</span>
+
+<span class="yellow">
+实现所有想实现的愿望。
+</span>
+
+
+<span class="green-text">
+[MODE] RICH LADY
+</span>
+
+<span class="green-text">
+[STATUS] ACTIVE
+</span>
+
+<span class="pink">
+MONEY LEVEL = MAX
+</span>
+
+</pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="message">
+
+            <div class="message-code">
+                // WEALTH MODULE #04
+            </div>
+
+            <h1>
+                💰 努力赚钱做个富婆
+            </h1>
+
+            <p>
+                钱包越来越鼓，生活越来越自由。
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     第五屏
+===================================================== -->
+
+<section class="screen">
+
+
+    <div class="center-space">
+
+        <div class="editor">
+
+            <div class="editor-header">
+
+                <div class="editor-dots">
+
+                    <span class="red"></span>
+                    <span class="yellow"></span>
+                    <span class="green"></span>
+
+                </div>
+
+                <div class="editor-name">
+                    forever.promise
+                </div>
+
+            </div>
+
+
+            <div class="editor-body">
+
+                <div
+                    class="line-number"
+                    id="numbers5"
+                ></div>
+
+
+                <div class="code-area">
+
+                    <div
+                        class="code-content"
+                        id="code5"
+                    >
+
+<pre>
+<span class="dim">
+// CHAPTER 05
+// OUR FUTURE
+</span>
+
+<span class="pink">const</span>
+future = {
+
+    travel:
+    <span class="yellow">
+    "TOGETHER"
+    </span>,
+
+    memories:
+    <span class="yellow">
+    "ENDLESS"
+    </span>,
+
+    birthdays:
+    <span class="yellow">
+    "MANY MORE"
+    </span>,
+
+    love:
+    <span class="yellow">
+    "FOREVER"
+    </span>
+
+};
+
+
+<span class="pink">for</span>(
+    let year = 1;
+    year &lt; Infinity;
+    year++
+) {
+
+    celebrateBirthday();
+
+    makeMemories();
+
+    travelTogether();
+
+    loveMore();
+
+}
+
+
+<span class="yellow">
+愿我们一起走过很多很多年。
+</span>
+
+<span class="yellow">
+一起看很多很多次日落。
+</span>
+
+<span class="yellow">
+一起去很多很多地方。
+</span>
+
+<span class="yellow">
+一起吃很多很多顿饭。
+</span>
+
+
+<span class="cyan">
+TIME = FOREVER
+</span>
+
+<span class="pink">
+LOVE = INFINITE
+</span>
+
+<span class="green-text">
+FUTURE = TOGETHER
+</span>
+
+
+<span class="cyan">
+future.start();
+</span>
+
+</pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="message">
+
+            <div class="message-code">
+                // FUTURE MODULE #05
+            </div>
+
+            <h1>
+                💙 愿我们一直一直在一起
+            </h1>
+
+            <p>
+                一起旅行，一起吃饭，一起慢慢变老。
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     FINAL
+===================================================== -->
+
+<section class="final">
+
+
+    <div class="final-content">
+
+        <div
+            style="
+            color:#00eaff;
+            font-size:12px;
+            margin-bottom:20px;
+            "
+        >
+            [ FINAL MESSAGE · PROGRAM COMPLETE ]
+        </div>
+
+
+        <div class="final-heart">
+            ❤️
+        </div>
+
+
+        <h1>
+            老婆我爱你
+        </h1>
+
+
+        <div class="final-sub">
+
+            I LOVE YOU FOREVER
+
+            <br>
+
+            LOVE_STATUS = TRUE
+
+            <br>
+
+            LOVE_LEVEL = ∞
+
+            <br><br>
+
+            <span
+                style="
+                color:#00ff9d;
+                "
+            >
+                ENDLESS LOVE FOR YOU...
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     烟花
+===================================================== -->
+
+<canvas id="fireworks"></canvas>
+
+
+
+<div class="scroll-hint">
+
+    ♥ 自动滚动中 · ENJOY THIS SURPRISE ♥
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   MATRIX CODE RAIN
+========================================================= */
+
+const matrix =
+    document.getElementById("matrix");
+
+const ctx =
+    matrix.getContext("2d");
+
+
+function resizeMatrix() {
+
+    matrix.width =
+        window.innerWidth;
+
+    matrix.height =
+        window.innerHeight;
+
+}
+
+
+resizeMatrix();
+
+window.addEventListener(
+    "resize",
+    resizeMatrix
+);
+
+
+const chars =
+    "01ABCDEFGHIJKLMNOPQRSTUVWXYZ{}[]<>/\\\\#$%&*@LOVE生日快乐";
+
+
+const fontSize = 14;
+
+let columns =
+    Math.floor(
+        window.innerWidth /
+        fontSize
+    );
+
+let drops =
+    new Array(columns)
+        .fill(1);
+
+
+function drawMatrix() {
+
+    ctx.fillStyle =
+        "rgba(0,0,0,.055)";
+
+    ctx.fillRect(
+        0,
+        0,
+        matrix.width,
+        matrix.height
+    );
+
+
+    ctx.font =
+        fontSize +
+        "px monospace";
+
+
+    ctx.fillStyle =
+        "#00ff9d";
+
+
+    for(
+        let i = 0;
+        i < drops.length;
+        i++
+    ) {
+
+        const char =
+            chars[
+                Math.floor(
+                    Math.random() *
+                    chars.length
+                )
+            ];
+
+
+        ctx.fillText(
+            char,
+            i * fontSize,
+            drops[i] * fontSize
+        );
+
+
+        if(
+            drops[i] * fontSize >
+            matrix.height &&
+            Math.random() > .975
+        ) {
+
+            drops[i] = 0;
+
+        }
+
+
+        drops[i]++;
+
+    }
+
+}
+
+
+setInterval(
+    drawMatrix,
+    45
+);
+
+
+
+/* =========================================================
+   星空
+========================================================= */
+
+const stars =
+    document.getElementById("stars");
+
+
+for(
+    let i = 0;
+    i < 100;
+    i++
+) {
+
+    const star =
+        document.createElement("div");
+
+    star.className =
+        "star";
+
+
+    star.style.left =
+        Math.random() * 100 +
+        "%";
+
+
+    star.style.top =
+        Math.random() * 100 +
+        "%";
+
+
+    star.style.animationDelay =
+        Math.random() * 3 +
+        "s";
+
+
+    stars.appendChild(
+        star
+    );
+
+}
+
+
+
+/* =========================================================
+   代码行号
+========================================================= */
+
+function createNumbers(
+    id,
+    count
+) {
+
+    const el =
+        document.getElementById(id);
+
+    let html = "";
+
+    for(
+        let i = 1;
+        i <= count;
+        i++
+    ) {
+
+        html +=
+            i +
+            "<br>";
+
+    }
+
+    el.innerHTML =
+        html;
+
+}
+
+
+createNumbers(
+    "numbers1",
+    80
+);
+
+createNumbers(
+    "numbers2",
+    65
+);
+
+createNumbers(
+    "numbers3",
+    60
+);
+
+createNumbers(
+    "numbers4",
+    65
+);
+
+createNumbers(
+    "numbers5",
+    70
+);
+
+
+
+/* =========================================================
+   编辑器代码自动滚动
+========================================================= */
+
+const codeEditors = [
+
+    "code1",
+    "code2",
+    "code3",
+    "code4",
+    "code5"
+
+];
+
+
+const codeOffset = {};
+
+
+codeEditors.forEach(
+    id => {
+
+        codeOffset[id] = 0;
+
+    }
+);
+
+
+function scrollCode() {
+
+    codeEditors.forEach(
+        id => {
+
+            const el =
+                document.getElementById(id);
+
+            if(!el) {
+                return;
+            }
+
+
+            codeOffset[id] += .28;
+
+
+            /*
+             * 到底重新开始
+             */
+
+            const max =
+                Math.max(
+                    0,
+                    el.scrollHeight - 400
+                );
+
+
+            if(
+                codeOffset[id] >
+                max
+            ) {
+
+                codeOffset[id] = 0;
+
+            }
+
+
+            el.style.transform =
+                "translateY(-" +
+                codeOffset[id] +
+                "px)";
+
+        }
+    );
+
+
+    requestAnimationFrame(
+        scrollCode
+    );
+
+}
+
+
+scrollCode();
+
+
+/* =========================================================
+   自动一屏一屏向下滚动
+========================================================= */
+
+const screens = document.querySelectorAll(".screen, .final");
+
+/*
+ * 每一屏停留时间
+ * 5000 = 5秒
+ */
+const SCREEN_WAIT = 5000;
+
+/*
+ * 第一屏进入后等待多久开始
+ */
+const START_DELAY = 3000;
+
+
+/*
+ * 当前屏幕
+ */
+let currentScreen = 0;
+
+
+/*
+ * 是否正在自动播放
+ */
+let autoPlaying = true;
+
+
+/*
+ * 自动播放
+ */
+function playBirthday() {
+
+    if (!autoPlaying) {
+        return;
+    }
+
+
+    /*
+     * 最后一屏不再继续向下
+     */
+    if (currentScreen >= screens.length - 1) {
+
+        return;
+
+    }
+
+
+    currentScreen++;
+
+
+    /*
+     * 平滑滚动到下一屏
+     */
+    screens[currentScreen].scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+
+    /*
+     * 下一屏停留 SCREEN_WAIT 毫秒
+     */
+    setTimeout(
+        playBirthday,
+        SCREEN_WAIT
+    );
+
+}
+
+
+/*
+ * 页面加载完成后
+ * 先展示第一屏 START_DELAY 毫秒
+ */
+setTimeout(
+    playBirthday,
+    START_DELAY
+);
+
+
+/*
+ * 用户自己滚动时
+ * 暂停3秒
+ */
+
+function userScroll() {
+
+    autoScroll = false;
+
+
+    clearTimeout(
+        userTimer
+    );
+
+
+    userTimer =
+        setTimeout(
+            function() {
+
+                autoScroll = true;
+
+            },
+            3000
+        );
+
+}
+
+
+window.addEventListener(
+    "wheel",
+    userScroll,
+    {
+        passive:true
+    }
+);
+
+
+window.addEventListener(
+    "touchstart",
+    userScroll,
+    {
+        passive:true
+    }
+);
+
+
+
+/* =========================================================
+   最后一屏烟花
+========================================================= */
+
+const fireCanvas =
+    document.getElementById(
+        "fireworks"
+    );
+
+const fireCtx =
+    fireCanvas.getContext("2d");
+
+
+function resizeFireworks() {
+
+    fireCanvas.width =
+        window.innerWidth;
+
+    fireCanvas.height =
+        window.innerHeight;
+
+}
+
+
+resizeFireworks();
+
+window.addEventListener(
+    "resize",
+    resizeFireworks
+);
+
+
+let rockets = [];
+
+let particles = [];
+
+
+class Rocket {
+
+    constructor(
+        x,
+        target
+    ) {
+
+        this.x = x;
+
+        this.y =
+            fireCanvas.height;
+
+        this.target =
+            target;
+
+        this.speed =
+            7 +
+            Math.random() * 3;
+
+    }
+
+
+    update() {
+
+        this.y -=
+            this.speed;
+
+
+        if(
+            this.y <=
+            this.target
+        ) {
+
+            explode(
+                this.x,
+                this.y
+            );
+
+            return true;
+
+        }
+
+
+        return false;
+
+    }
+
+
+    draw() {
+
+        fireCtx.fillStyle =
+            "#fff";
+
+        fireCtx.shadowBlur =
+            10;
+
+        fireCtx.shadowColor =
+            "#00eaff";
+
+        fireCtx.beginPath();
+
+        fireCtx.arc(
+            this.x,
+            this.y,
+            2,
+            0,
+            Math.PI * 2
+        );
+
+        fireCtx.fill();
+
+    }
+
+}
+
+
+class Particle {
+
+    constructor(
+        x,
+        y
+    ) {
+
+        this.x = x;
+
+        this.y = y;
+
+        const angle =
+            Math.random() *
+            Math.PI *
+            2;
+
+
+        const speed =
+            1.5 +
+            Math.random() *
+            6;
+
+
+        this.vx =
+            Math.cos(angle) *
+            speed;
+
+
+        this.vy =
+            Math.sin(angle) *
+            speed;
+
+
+        this.life = 1;
+
+
+        const colors = [
+
+            "#ff3ec8",
+            "#00eaff",
+            "#ffdc4a",
+            "#7dff9d",
+            "#ffffff",
+            "#9d6cff"
+
+        ];
+
+
+        this.color =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
+            ];
+
+    }
+
+
+    update() {
+
+        this.x +=
+            this.vx;
+
+        this.y +=
+            this.vy;
+
+        this.vy +=
+            .045;
+
+        this.vx *=
+            .99;
+
+        this.life -=
+            .012;
+
+    }
+
+
+    draw() {
+
+        fireCtx.save();
+
+        fireCtx.globalAlpha =
+            this.life;
+
+        fireCtx.fillStyle =
+            this.color;
+
+        fireCtx.shadowBlur =
+            15;
+
+        fireCtx.shadowColor =
+            this.color;
+
+        fireCtx.beginPath();
+
+        fireCtx.arc(
+            this.x,
+            this.y,
+            2,
+            0,
+            Math.PI * 2
+        );
+
+        fireCtx.fill();
+
+        fireCtx.restore();
+
+    }
+
+}
+
+
+function explode(
+    x,
+    y
+) {
+
+    for(
+        let i = 0;
+        i < 110;
+        i++
+    ) {
+
+        particles.push(
+            new Particle(
+                x,
+                y
+            )
+        );
+
+    }
+
+}
+
+
+function animateFireworks() {
+
+    fireCtx.clearRect(
+        0,
+        0,
+        fireCanvas.width,
+        fireCanvas.height
+    );
+
+
+    rockets =
+        rockets.filter(
+            rocket => {
+
+                const finished =
+                    rocket.update();
+
+                rocket.draw();
+
+                return !finished;
+
+            }
+        );
+
+
+    particles =
+        particles.filter(
+            particle => {
+
+                particle.update();
+
+                particle.draw();
+
+                return particle.life > 0;
+
+            }
+        );
+
+
+    requestAnimationFrame(
+        animateFireworks
+    );
+
+}
+
+
+animateFireworks();
+
+
+
+/* =========================================================
+   判断最后一屏
+========================================================= */
+
+const finalScreen =
+    document.querySelector(
+        ".final"
+    );
+
+
+let fireworksStarted =
+    false;
+
+
+const observer =
+    new IntersectionObserver(
+        entries => {
+
+            entries.forEach(
+                entry => {
+
+                    if(
+                        entry.isIntersecting &&
+                        !fireworksStarted
+                    ) {
+
+                        fireworksStarted =
+                            true;
+
+                        startFireworks();
+
+                    }
+
+                }
+            );
+
+        },
+        {
+            threshold: .5
+        }
+    );
+
+
+observer.observe(
+    finalScreen
+);
+
+
+
+/* =========================================================
+   连续烟花
+========================================================= */
+
+function startFireworks() {
+
+    /*
+     * 第一轮烟花
+     */
+
+    for(
+        let i = 0;
+        i < 25;
+        i++
+    ) {
+
+        setTimeout(
+            function() {
+
+                rockets.push(
+                    new Rocket(
+
+                        Math.random() *
+                        fireCanvas.width,
+
+                        80 +
+                        Math.random() *
+                        fireCanvas.height *
+                        .5
+
+                    )
+                );
+
+            },
+
+            i * 250
+
+        );
+
+    }
+
+
+    /*
+     * 后续持续烟花
+     */
+
+    setInterval(
+        function() {
+
+            rockets.push(
+                new Rocket(
+
+                    Math.random() *
+                    fireCanvas.width,
+
+                    80 +
+                    Math.random() *
+                    fireCanvas.height *
+                    .45
+
+                )
+            );
+
+        },
+        900
+    );
+
+}
+
+
+
+/* =========================================================
+   点击屏幕也放烟花
+========================================================= */
+
+document.addEventListener(
+    "click",
+    function(e) {
+
+        rockets.push(
+            new Rocket(
+                e.clientX,
+                e.clientY
+            )
+        );
+
+    }
+);
+
+</script>
+
+</body>
+</html>
